@@ -1,35 +1,34 @@
-"use client";
+'use client'
 
-import ParticleBackground from "@/components/ParticleBackground";
-import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import AboutSection from "@/components/AboutSection";
-import SkillsSection from "@/components/SkillsSection";
-import LanguagesSection from "@/components/LanguagesSection";
-import ProjectsSection from "@/components/ProjectsSection";
-import EducationSection from "@/components/EducationSection";
-import ExperienceSection from "@/components/ExperienceSection";
-import ContactSection from "@/components/ContactSection";
-import Footer from "@/components/Footer";
-import FloatingSocials from "@/components/FloatingSocials";
+import dynamic from 'next/dynamic'
+import Navbar from '@/components/Navbar'
+import HeroSection from '@/components/HeroSection'
+import AboutSection from '@/components/AboutSection'
+import SkillsSection from '@/components/SkillsSection'
+import ProjectsSection from '@/components/ProjectsSection'
+import ExperienceTimeline from '@/components/ExperienceTimeline'
+import PlaygroundSection from '@/components/PlaygroundSection'
+import ContactSection from '@/components/ContactSection'
+import Footer from '@/components/Footer'
+
+const FloatingElements = dynamic(
+  () => import('@/components/ui/FloatingElements'),
+  { ssr: false }
+)
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen bg-[#0a0a0f]">
-      <ParticleBackground />
+    <main className="relative min-h-screen">
       <Navbar />
-      <section id="home">
-        <HeroSection />
-      </section>
+      <HeroSection />
       <AboutSection />
       <SkillsSection />
-      <LanguagesSection />
       <ProjectsSection />
-      <EducationSection />
-      <ExperienceSection />
+      <ExperienceTimeline />
+      <PlaygroundSection />
       <ContactSection />
       <Footer />
-      <FloatingSocials />
+      <FloatingElements />
     </main>
-  );
+  )
 }

@@ -1,36 +1,36 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
+  variable: "--font-jetbrains",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Muvunyi Hidjazi (K4NE) | Software Developer Portfolio",
+  title: "K4NE | Software Developer Portfolio",
   description:
-    "Hi, I'm Muvunyi Hidjazi (K4NE), a 19-year-old Software Development student at SJITC, Rwanda. Building modern web applications, solving real-world problems through technology.",
+    "K4NE (Muvunyi Hidjazi) – Software developer crafting futuristic digital experiences. Explore projects, skills, and interactive 3D playground.",
   keywords: [
-    "Muvunyi Hidjazi",
     "K4NE",
-    "KANE",
+    "Muvunyi Hidjazi",
     "Software Developer",
-    "React Developer",
-    "Full Stack Developer",
-    "Rwanda",
-    "SJITC",
+    "React",
+    "Next.js",
     "Portfolio",
+    "Rwanda",
   ],
   openGraph: {
-    title: "Muvunyi Hidjazi (K4NE) | Software Developer",
+    title: "K4NE | Software Developer Portfolio",
     description:
-      "Software Development student at SJITC, Rwanda. Building modern web applications with React, Next.js, Node.js.",
+      "Software developer crafting futuristic digital experiences.",
     type: "website",
     locale: "en_US",
   },
@@ -38,21 +38,14 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        />
-      </head>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en" className="scroll-smooth">
+      <body
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

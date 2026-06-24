@@ -1,109 +1,114 @@
-"use client";
+'use client'
 
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion } from 'framer-motion'
+import GlassCard from './ui/GlassCard'
+import AnimatedCounter from './ui/AnimatedCounter'
 
-const stats = [
-  { value: "19", label: "Years Old", icon: "fa-calendar" },
-  { value: "L5", label: "SWD Student", icon: "fa-graduation-cap" },
-  { value: "3", label: "Languages", icon: "fa-language" },
-  { value: "10+", label: "Technologies", icon: "fa-code" },
-];
+const STATS = [
+  { label: 'Years Old', value: 19, suffix: '' },
+  { label: 'Technologies', value: 12, suffix: '+' },
+  { label: 'Languages', value: 3, suffix: '' },
+  { label: 'Projects Built', value: 8, suffix: '+' },
+]
 
 export default function AboutSection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
   return (
     <section id="about" className="section-padding relative">
-      <div className="max-w-6xl mx-auto">
+      <div className="section-gradient absolute inset-0 pointer-events-none" />
+
+      <div className="container-wide relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          
-          <h2 className="text-3xl md:text-5xl font-bold">
-            About{" "}
-            <span className="text-gradient">Me</span>
+          <p className="text-cyan-400 font-mono text-sm tracking-widest uppercase mb-3">
+            About Me
+          </p>
+          <h2 className="text-4xl md:text-5xl font-bold">
+            Crafting{' '}
+            <span className="text-gradient">Digital Experiences</span>
           </h2>
-          <div className="mt-3 w-20 h-1 bg-gradient-to-r from-purple-500 to-cyan-400 rounded-full mx-auto" />
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+        <div className="grid md:grid-cols-5 gap-6 items-start">
           <motion.div
+            className="md:col-span-3"
             initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="glass rounded-2xl p-8 neu-card">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center text-white font-bold text-lg">
+            <GlassCard>
+              <div className="flex items-start gap-6 mb-6">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-3xl font-bold text-white shrink-0">
                   K
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white">
+                  <h3 className="text-2xl font-bold text-white mb-1">
                     Muvunyi Hidjazi
                   </h3>
-                  <p className="text-sm text-gray-400 font-mono">@k4ne_dev</p>
+                  <p className="text-cyan-400 font-mono text-sm">@k4ne_dev</p>
                 </div>
               </div>
-              <p className="text-gray-300 leading-relaxed text-lg">
-                Hi, I&apos;m Muvunyi Hidjazi (K4NE), a 19-year-old Software
-                Development student at Saint Joseph Integrated Technical College
-                (SJITC) in Rwanda. I am passionate about creating modern web
-                applications, solving real-world problems through technology,
-                and continuously improving my development skills.
-              </p>
-              <div className="mt-6 flex gap-4">
-                {["fa-react", "fa-node", "fa-js", "fa-python"].map(
-                  (icon, i) => (
-                    <span
-                      key={i}
-                      className="text-2xl text-gray-500 hover:text-purple-400 transition-colors"
-                    >
-                      <i className={`fab ${icon}`} />
-                    </span>
-                  )
-                )}
+              <div className="space-y-4 text-gray-300 leading-relaxed">
+                <p>
+                  A 19-year-old Software Development student at SJITC, Rwanda, 
+                  passionate about building futuristic digital experiences that 
+                  blend creativity with technology.
+                </p>
+                <p>
+                  Currently pursuing an L5 Software Development diploma, I specialize 
+                  in full-stack development with modern frameworks like Next.js and 
+                  React, while exploring the intersection of 3D graphics and web.
+                </p>
+                <p className="text-cyan-300 font-mono text-sm">
+                  &gt; Status: Building the future through code.
+                </p>
               </div>
-            </div>
+            </GlassCard>
           </motion.div>
 
-          <div
-            ref={ref}
-            className="grid grid-cols-2 gap-4"
+          <motion.div
+            className="md:col-span-2 grid grid-cols-2 gap-4"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6, delay: 0.4 }}
           >
-            {stats.map((stat, i) => (
+            {STATS.map((stat, i) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="glass rounded-xl p-6 text-center neu-card hover:border-purple-500/20 transition-all"
+                transition={{ duration: 0.4, delay: 0.1 * i }}
               >
-                <i
-                  className={`fas ${stat.icon} text-2xl text-purple-400 mb-3`}
-                />
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.5 }}
-                  animate={isInView ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ duration: 0.5, delay: i * 0.1 + 0.3 }}
-                  className="text-3xl md:text-4xl font-bold text-gradient mb-1"
-                >
-                  {stat.value}
-                </motion.div>
-                <div className="text-sm text-gray-400">{stat.label}</div>
+                <GlassCard glow="blue" hover>
+                  <div className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-gradient mb-1">
+                      <AnimatedCounter to={stat.value} suffix={stat.suffix} />
+                    </div>
+                    <p className="text-gray-400 text-sm">{stat.label}</p>
+                  </div>
+                </GlassCard>
               </motion.div>
             ))}
-          </div>
+            <div className="col-span-2">
+              <GlassCard glow="cyan">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-gray-300 text-sm font-mono">
+                    Open to freelance & collaboration opportunities
+                  </span>
+                </div>
+              </GlassCard>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
-  );
+  )
 }

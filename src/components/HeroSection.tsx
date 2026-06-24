@@ -1,163 +1,190 @@
-"use client";
+'use client'
 
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef, Suspense } from 'react'
+import { motion } from 'framer-motion'
+import { Canvas } from '@react-three/fiber'
+import { Environment } from '@react-three/drei'
+import Crystal from './canvas/Crystal'
+import AuroraBackground from './canvas/AuroraBackground'
+import ParticleField from './canvas/ParticleField'
+import GradientButton from './ui/GradientButton'
+import FloatingElements from './ui/FloatingElements'
 
-const roles = [
-  "Software Developer",
-  "React Developer",
-  "Full Stack Developer",
-  "Problem Solver",
-  "Student Developer",
-];
+const TITLES = [
+  'Software Developer',
+  'React Engineer',
+  'Full Stack Developer',
+  'Problem Solver',
+  'Student Developer',
+]
+
+function Scene() {
+  return (
+    <Canvas
+      camera={{ position: [0, 0, 6], fov: 45 }}
+      gl={{ antialias: true, alpha: true }}
+      style={{ background: 'transparent' }}
+    >
+      <Suspense fallback={null}>
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1} />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#00BFFF" />
+        <AuroraBackground />
+        <ParticleField count={1500} />
+        <Crystal />
+        <Environment preset="city" />
+      </Suspense>
+    </Canvas>
+  )
+}
 
 export default function HeroSection() {
-  const [roleIndex, setRoleIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [displayText, setDisplayText] = useState("");
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const [titleIndex, setTitleIndex] = useState(0)
+  const [text, setText] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+    const handleMouse = (e: MouseEvent) => {
+      setMousePos({
+        x: (e.clientX / window.innerWidth - 0.5) * 2,
+        y: -(e.clientY / window.innerHeight - 0.5) * 2,
+      })
+    }
+    window.addEventListener('mousemove', handleMouse)
+    return () => window.removeEventListener('mousemove', handleMouse)
+  }, [])
 
   useEffect(() => {
-    const currentRole = roles[roleIndex];
-    let timeout: NodeJS.Timeout;
+    const current = TITLES[titleIndex]
+    let timeout: NodeJS.Timeout
 
-    if (!isDeleting && charIndex < currentRole.length) {
-      timeout = setTimeout(() => {
-        setDisplayText(currentRole.slice(0, charIndex + 1));
-        setCharIndex((prev) => prev + 1);
-      }, 60);
-    } else if (!isDeleting && charIndex === currentRole.length) {
-      timeout = setTimeout(() => setIsDeleting(true), 2000);
-    } else if (isDeleting && charIndex > 0) {
-      timeout = setTimeout(() => {
-        setDisplayText(currentRole.slice(0, charIndex - 1));
-        setCharIndex((prev) => prev - 1);
-      }, 40);
-    } else if (isDeleting && charIndex === 0) {
-      setIsDeleting(false);
-      setRoleIndex((prev) => (prev + 1) % roles.length);
+    if (!deleting) {
+      if (text.length < current.length) {
+        timeout = setTimeout(
+          () => setText(current.slice(0, text.length + 1)),
+          80 + Math.random() * 50
+        )
+      } else {
+        timeout = setTimeout(() => setDeleting(true), 2000)
+      }
+    } else {
+      if (text.length > 0) {
+        timeout = setTimeout(
+          () => setText(text.slice(0, -1)),
+          40 + Math.random() * 30
+        )
+      } else {
+        setDeleting(false)
+        setTitleIndex((i) => (i + 1) % TITLES.length)
+      }
     }
 
-    return () => clearTimeout(timeout);
-  }, [charIndex, isDeleting, roleIndex]);
+    return () => clearTimeout(timeout)
+  }, [text, deleting, titleIndex])
 
   return (
     <section
-      ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden section-padding"
+      id="hero"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
       <div
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 hero-gradient pointer-events-none"
         style={{
-          background: `radial-gradient(600px circle at ${mousePos.x}px ${mousePos.y}px, rgba(124, 58, 237, 0.08), transparent 40%)`,
+          transform: `translate(${mousePos.x * 10}px, ${mousePos.y * 10}px)`,
+          transition: 'transform 0.2s ease-out',
         }}
       />
 
-      <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-purple-500/10 rounded-full blur-[100px] animate-float-slow" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] animate-float" style={{ animationDelay: "-3s" }} />
-      <div className="absolute top-1/3 right-1/3 w-48 h-48 bg-blue-500/10 rounded-full blur-[80px] animate-float-slow" style={{ animationDelay: "-5s" }} />
+      <div className="absolute inset-0">
+        <Scene />
+      </div>
 
-      <div className="relative z-10 flex flex-col items-center text-center max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative mb-8"
-        >
-          <div className="w-40 h-40 md:w-52 md:h-52 rounded-full relative animate-float">
-            <div className="absolute inset-0 rounded-full animate-pulse-glow" />
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500 via-cyan-400 to-purple-600 p-[3px]">
-              <div className="w-full h-full rounded-full bg-[#0a0a0f] flex items-center justify-center overflow-hidden">
-                <div className="w-full h-full rounded-full bg-gradient-to-br from-purple-900/50 to-cyan-900/50 flex items-center justify-center">
-                  <span className="text-5xl md:text-6xl font-bold text-gradient-simple">
-                    K
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+      <FloatingElements />
 
+      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <p className="text-sm md:text-base uppercase tracking-[0.3em] text-purple-400 mb-3 font-mono">
-            K4NE / KANE
-          </p>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 tracking-tight">
-            Muvunyi{" "}
-            <span className="text-gradient">Hidjazi</span>
-          </h1>
-          <div className="h-10 md:h-12 flex items-center justify-center mb-8">
-            <span className="text-xl md:text-2xl lg:text-3xl text-gray-300 font-mono">
-              <span>{displayText}</span>
-              <span className="text-purple-400 animate-pulse">|</span>
+          <motion.p
+            className="text-cyan-400 font-mono text-sm md:text-base mb-4 tracking-widest uppercase"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            Hello, I am
+          </motion.p>
+
+          <motion.h1
+            className="text-7xl sm:text-8xl md:text-9xl font-bold tracking-tighter mb-4"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.6, type: 'spring' }}
+          >
+            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-400 bg-clip-text text-transparent bg-[length:200%_auto] animate-shimmer">
+              K4ne
             </span>
-          </div>
+          </motion.h1>
+
+          <motion.div
+            className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-8 h-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+          >
+            <span>{text}</span>
+            <span className="typewriter-cursor" />
+          </motion.div>
+
+          <motion.div
+            className="flex flex-wrap justify-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.4 }}
+          >
+            <GradientButton size="lg" onClick={() => {
+              document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })
+            }}>
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0l-4-4m4 4l-4 4" />
+              </svg>
+              View Projects
+            </GradientButton>
+            <GradientButton variant="secondary" size="lg" href="/resume.pdf">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Download CV
+            </GradientButton>
+            <GradientButton variant="ghost" size="lg" onClick={() => {
+              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+            }}>
+              Contact Me
+            </GradientButton>
+          </motion.div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex flex-wrap gap-4 justify-center"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5 }}
         >
-          <motion.a
-            href="#projects"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-medium shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-shadow"
+          <motion.div
+            className="w-6 h-10 border-2 border-gray-500 rounded-full flex justify-center"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
           >
-            View Projects
-          </motion.a>
-          <motion.a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              alert("CV download will be available soon.");
-            }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 rounded-full border border-purple-500/30 text-purple-300 font-medium glass-hover hover:border-purple-500/50 transition-all"
-          >
-            Download CV
-          </motion.a>
-          <motion.a
-            href="#contact"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 rounded-full glass font-medium text-gray-300 hover:text-white border border-white/10 transition-all"
-          >
-            Contact Me
-          </motion.a>
+            <motion.div
+              className="w-1.5 h-3 bg-cyan-400 rounded-full mt-2"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+          </motion.div>
         </motion.div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <i className="fas fa-chevron-down text-purple-400/50 text-xl" />
-        </motion.div>
-      </motion.div>
     </section>
-  );
+  )
 }
